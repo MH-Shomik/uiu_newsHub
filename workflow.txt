@@ -1,0 +1,285 @@
+🎭 System Roles Overview
+
+The system has three main roles:
+
+Admin
+
+Moderator
+
+Student (End User)
+
+Each role has different permissions, responsibilities, and workflows.
+
+🔴 1. Admin Workflow (Highest Authority)
+Role Purpose
+
+Admin manages the entire system, controls content, users, and system configuration.
+
+🔁 Admin Workflow (Step-by-Step)
+1️⃣ Login & Authentication
+
+Admin logs in using email + password
+
+PHP session-based authentication
+
+Role verified as admin
+
+2️⃣ Dashboard Access
+
+Admin sees:
+
+Total news count
+
+Active alerts
+
+Most viewed posts
+
+Recent activity logs
+
+(Data pulled from news, alerts, activity_logs tables)
+
+3️⃣ Category Management
+
+Create / Edit / Delete categories
+Examples:
+
+Academics
+
+Events
+
+Research
+
+Achievements
+
+📌 Updates stored in categories table
+
+4️⃣ News Management (CRUD)
+
+Create news post
+
+Assign category
+
+Upload image (optional)
+
+Edit or delete news
+
+Set visibility (published/unpublished)
+
+📌 Stored in news table
+📌 created_by = admin_id
+
+5️⃣ Alert Management
+
+Create alerts (traffic / weather / national)
+
+Set priority:
+
+Low
+
+Medium
+
+High (popup banner)
+
+Update or remove alerts
+
+📌 Stored in alerts table
+📌 High-priority alerts trigger UI banners
+
+6️⃣ User & Moderator Control
+
+View all users
+
+Assign roles (admin / moderator / student)
+
+Deactivate accounts if needed
+
+📌 Stored in users table
+
+7️⃣ Monitoring & Logs
+
+View activity logs
+
+Track:
+
+Who posted what
+
+When updates were made
+
+📌 Stored in activity_logs
+
+✅ Admin Output
+
+Verified content
+
+System stability
+
+Controlled communication flow
+
+🟠 2. Moderator Workflow (Content Manager)
+Role Purpose
+
+Moderators help admins by managing content, but without full control.
+
+🔁 Moderator Workflow
+1️⃣ Login
+
+Session-based login
+
+Role verified as moderator
+
+2️⃣ Content Dashboard
+
+Moderator can:
+
+View pending news
+
+View alerts
+
+See assigned categories
+
+3️⃣ News Submission
+
+Create news posts
+
+Add title, description, category
+
+Submit for approval
+
+📌 Status = pending
+📌 Stored in news table
+
+4️⃣ Content Review
+
+Depending on permission:
+
+Edit own posts
+
+Delete own posts
+
+Cannot delete admin posts
+
+5️⃣ Alert Suggestion (Optional)
+
+Suggest alerts to admin
+
+Admin approves final publishing
+
+❌ Moderator Restrictions
+
+Cannot manage users
+
+Cannot delete system categories
+
+Cannot access system settings
+
+✅ Moderator Output
+
+Fresh, frequent content
+
+Reduced admin workload
+
+🟢 3. Student Workflow (End User)
+Role Purpose
+
+Students are consumers of information.
+
+🔁 Student Workflow
+1️⃣ Access System
+
+Login (or guest access if allowed)
+
+Role = student
+
+2️⃣ View News Feed
+
+Latest news displayed
+
+Sorted by time
+
+Auto-refresh via AJAX
+
+📌 Data fetched from news table
+
+3️⃣ Filter & Search
+
+Students can:
+
+Filter by category
+
+Search by keywords
+
+Filter by date
+
+(JavaScript + PHP API)
+
+4️⃣ View Alerts
+
+Traffic updates
+
+Weather alerts
+
+National announcements
+
+🚨 High-priority alerts shown as:
+
+Popup
+
+Banner
+
+5️⃣ Read Details
+
+Open full news
+
+View images
+
+Read descriptions
+
+📌 Views tracked for analytics
+
+❌ Student Restrictions
+
+Cannot post content
+
+Cannot edit or delete anything
+
+No admin access
+
+✅ Student Output
+
+Timely information
+
+Reduced confusion
+
+Better campus engagement
+
+🔄 Overall System Workflow (Big Picture)
+Admin / Moderator
+        ↓
+   PHP Backend (API)
+        ↓
+   MySQL Database
+        ↓
+   AJAX Fetch Requests
+        ↓
+ Student Frontend UI
+
+📊 Role Comparison Table
+Feature	Admin	Moderator	Student
+Login	✅	✅	✅
+Post News	✅	✅ (limited)	❌
+Approve Content	✅	❌	❌
+Manage Alerts	✅	⚠️ Suggest only	❌
+Manage Users	✅	❌	❌
+View News	✅	✅	✅
+Search & Filter	✅	✅	✅
+🎯 Why This Workflow is Strong
+
+Clear role separation
+
+Secure access control
+
+Scalable for future features
+
+Matches real-world university systems
+
+Easy to explain in viva or defense
