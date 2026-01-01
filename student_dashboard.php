@@ -34,6 +34,12 @@ try {
     $personalizedFeed = $feedStmt->fetchAll();
 } catch (PDOException $e) { $personalizedFeed = []; }
 
+// 3. Fetch Trending News
+try {
+    $trendingStmt = $pdo->query("SELECT news_id, title, views FROM news WHERE status='published' ORDER BY views DESC LIMIT 3");
+    $trendingNews = $trendingStmt->fetchAll();
+} catch (PDOException $e) { $trendingNews = []; }
+
 // Helper for colors
 function getCategoryColor($slug) {
     $map = [
@@ -76,6 +82,20 @@ function getCategoryColor($slug) {
 </head>
 <body class="bg-slate-50 text-slate-800">
 
+    <!-- Alerts Banner (Hidden by default, shown via JS if alerts exist) -->
+    <div id="alert-banner" class="bg-slate-900 text-white overflow-hidden relative z-50 hidden">
+        <div class="max-w-7xl mx-auto flex items-center h-12">
+            <div class="bg-strawberry_red-500 text-white font-bold px-4 h-full flex items-center text-sm tracking-wider uppercase flex-shrink-0 z-10 shadow-lg">
+                Live Alerts
+            </div>
+            <div class="flex-1 overflow-hidden relative h-full flex items-center bg-slate-800">
+                <div id="alert-ticker" class="animate-marquee whitespace-nowrap flex gap-12 items-center text-sm font-medium pl-4">
+                    <!-- Alerts injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="bg-white/80 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -90,6 +110,9 @@ function getCategoryColor($slug) {
                     </div>
                 </a>
                 <div class="flex items-center gap-4">
+                    <a href="search.php" class="p-2 text-slate-400 hover:text-cool_sky-600 transition-colors rounded-full hover:bg-slate-100" title="Search News">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </a>
                      <span class="hidden md:block text-sm font-semibold text-slate-600">
                         Hi, <?php echo htmlspecialchars($userInfo['name']); ?>
                      </span>
@@ -155,6 +178,24 @@ function getCategoryColor($slug) {
                                 <h4 class="font-bold text-slate-800 text-sm">Project Submission</h4>
                                 <p class="text-xs text-slate-500 mt-1">Final year project proposal deadline.</p>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-slate-100">
+                        <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                             <svg class="w-5 h-5 text-strawberry_red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                             Trending Now
+                        </h3>
+                        <div class="space-y-4">
+                            <?php foreach($trendingNews as $index => $trend): ?>
+                            <a href="news_details.php?id=<?php echo $trend['news_id']; ?>" class="flex items-center gap-4 group">
+                                <span class="text-2xl font-black text-slate-200 group-hover:text-cool_sky-500 transition-colors">0<?php echo $index + 1; ?></span>
+                                <div>
+                                    <h4 class="font-bold text-slate-700 text-sm group-hover:text-cool_sky-600 transition-colors line-clamp-2"><?php echo htmlspecialchars($trend['title']); ?></h4>
+                                    <span class="text-xs text-slate-400 font-medium"><?php echo number_format($trend['views']); ?> reads</span>
+                                </div>
+                            </a>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -238,5 +279,44 @@ function getCategoryColor($slug) {
         </div>
     </main>
 
+    <!-- Real-time Alerts Script -->
+    <script>
+        function fetchAlerts() {
+            fetch('api/get_alerts.php')
+                .then(response => response.json())
+                .then(data => {
+                    const alertContainer = document.getElementById('alert-ticker');
+                    if (data.status === 'success' && data.data.length > 0) {
+                        // Build HTML
+                        let html = '';
+                        data.data.forEach(alert => {
+                            let icon = 'INFO';
+                            let color = 'text-aquamarine-400';
+                            if (alert.severity === 'warning') { color = 'text-jasmine-400'; icon = '⚠️'; }
+                            if (alert.severity === 'danger')  { color = 'text-strawberry_red-300'; icon = '🚨'; }
+                            
+                            html += `
+                                <span class="inline-flex items-center gap-2 mr-12">
+                                    <span class="${color} text-lg">${icon}</span>
+                                    <span class="font-bold text-white">${alert.title}:</span>
+                                    <span class="text-slate-300">${alert.message}</span>
+                                </span>
+                            `;
+                        });
+                        
+                        alertContainer.innerHTML = html;
+                        document.getElementById('alert-banner').classList.remove('hidden');
+                    } else {
+                        document.getElementById('alert-banner').classList.add('hidden');
+                    }
+                })
+                .catch(err => console.error('Error fetching alerts:', err));
+        }
+
+        // Poll every 30 seconds
+        setInterval(fetchAlerts, 30000);
+        // Initial fetch
+        fetchAlerts();
+    </script>
 </body>
 </html>

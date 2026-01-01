@@ -135,32 +135,32 @@ try {
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-cool_sky-500 selection:text-white">
 
-    <!-- Alerts Banner (Ticker Style) -->
-    <?php if (!empty($alerts)): ?>
-    <div class="bg-slate-900 text-white overflow-hidden relative z-50">
+    <!-- Alerts Banner (Dynamic) -->
+    <div id="alert-banner" class="bg-slate-900 text-white overflow-hidden relative z-50 <?php echo empty($alerts) ? 'hidden' : ''; ?>">
         <div class="max-w-7xl mx-auto flex items-center h-12">
             <div class="bg-strawberry_red-500 text-white font-bold px-4 h-full flex items-center text-sm tracking-wider uppercase flex-shrink-0 z-10 shadow-lg">
-                Live Alerts
+                 Live Alerts
             </div>
             <div class="flex-1 overflow-hidden relative h-full flex items-center bg-slate-800">
-                <div class="animate-marquee whitespace-nowrap flex gap-12 items-center text-sm font-medium pl-4">
-                    <?php foreach ($alerts as $alert): 
-                        $icon = 'INFO';
-                        $color = 'text-aquamarine-400';
-                        if ($alert['severity'] == 'warning') { $color = 'text-jasmine-400'; $icon = '⚠️'; }
-                        if ($alert['severity'] == 'danger')  { $color = 'text-strawberry_red-300'; $icon = '🚨'; }
-                    ?>
-                    <span class="inline-flex items-center gap-2">
-                        <span class="<?php echo $color; ?> text-lg"><?php echo $icon; ?></span>
-                        <span class="font-bold text-white"><?php echo htmlspecialchars($alert['title']); ?>:</span>
-                        <span class="text-slate-300"><?php echo htmlspecialchars($alert['message']); ?></span>
-                    </span>
-                    <?php endforeach; ?>
+                <div id="alert-ticker" class="animate-marquee whitespace-nowrap flex gap-12 items-center text-sm font-medium pl-4">
+                    <?php if(!empty($alerts)): ?>
+                        <?php foreach ($alerts as $alert): 
+                            $icon = 'INFO';
+                            $color = 'text-aquamarine-400';
+                            if ($alert['severity'] == 'warning') { $color = 'text-jasmine-400'; $icon = '⚠️'; }
+                            if ($alert['severity'] == 'danger')  { $color = 'text-strawberry_red-300'; $icon = '🚨'; }
+                        ?>
+                        <span class="inline-flex items-center gap-2 mr-12">
+                            <span class="<?php echo $color; ?> text-lg"><?php echo $icon; ?></span>
+                            <span class="font-bold text-white"><?php echo htmlspecialchars($alert['title']); ?>:</span>
+                            <span class="text-slate-300"><?php echo htmlspecialchars($alert['message']); ?></span>
+                        </span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
-    <?php endif; ?>
 
     <!-- Navigation -->
     <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'student'): ?>
@@ -199,6 +199,10 @@ try {
                     <a href="index.php" class="px-5 py-2 rounded-full bg-white text-slate-900 font-semibold shadow-sm text-sm transition-all hover:shadow-md">Home</a>
                     <a href="#categories" class="px-5 py-2 rounded-full text-slate-600 hover:text-cool_sky-600 font-medium text-sm transition-colors hover:bg-white/50">Categories</a>
                     <a href="#latest" class="px-5 py-2 rounded-full text-slate-600 hover:text-cool_sky-600 font-medium text-sm transition-colors hover:bg-white/50">Latest News</a>
+                    <a href="search.php" class="px-5 py-2 rounded-full text-slate-600 hover:text-cool_sky-600 font-medium text-sm transition-colors hover:bg-white/50 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        Search
+                    </a>
                 </div>
 
                 <div class="hidden md:flex items-center gap-4">
@@ -416,5 +420,39 @@ try {
             </div>
         </div>
     </footer>
+    <script>
+        function fetchAlerts() {
+            fetch('api/get_alerts.php')
+                .then(response => response.json())
+                .then(data => {
+                    const alertContainer = document.getElementById('alert-ticker');
+                    const banner = document.getElementById('alert-banner');
+                    
+                    if (data.status === 'success' && data.data.length > 0) {
+                        let html = '';
+                        data.data.forEach(alert => {
+                            let icon = 'INFO';
+                            let color = 'text-aquamarine-400';
+                            if (alert.severity === 'warning') { color = 'text-jasmine-400'; icon = '⚠️'; }
+                            if (alert.severity === 'danger')  { color = 'text-strawberry_red-300'; icon = '🚨'; }
+                            
+                            html += `
+                                <span class="inline-flex items-center gap-2 mr-12">
+                                    <span class="${color} text-lg">${icon}</span>
+                                    <span class="font-bold text-white">${alert.title}:</span>
+                                    <span class="text-slate-300">${alert.message}</span>
+                                </span>
+                            `;
+                        });
+                        alertContainer.innerHTML = html;
+                        banner.classList.remove('hidden');
+                    } else {
+                        banner.classList.add('hidden');
+                    }
+                })
+                .catch(err => console.error('Error fetching alerts:', err));
+        }
+        setInterval(fetchAlerts, 30000);
+    </script>
 </body>
 </html>
