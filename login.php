@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | UIU NewsHub</title>
+    <link rel="icon" href="image.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -101,8 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-cool_sky-400 via-aquamarine-400 to-tangerine_dream-400"></div>
 
         <div class="text-center mb-10">
-            <div class="w-20 h-20 bg-gradient-to-br from-cool_sky-500 to-indigo-600 rounded-3xl flex items-center justify-center text-white text-4xl font-black mx-auto mb-6 shadow-glow rotate-3 hover:rotate-6 transition-transform">
-                U
+            <div class="w-24 h-24 mx-auto mb-6">
+                <img src="image.png" alt="Logo" class="w-full h-full object-contain rounded-full drop-shadow-xl hover:scale-105 transition-transform duration-300">
             </div>
             <h1 class="font-heading text-3xl font-bold text-slate-900">Welcome</h1>
             <p class="text-slate-500 mt-2 font-medium">Please enter your ID or Email</p>
