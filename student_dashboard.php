@@ -62,6 +62,7 @@ function getCategoryColor($slug) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Portal | UIU NewsHub</title>
+    <link rel="icon" href="image.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -134,7 +135,9 @@ function getCategoryColor($slug) {
     <nav class="sticky top-4 z-50 mx-4 md:mx-8 mb-8">
         <div class="glass-panel rounded-2xl px-6 py-4 flex justify-between items-center shadow-glass">
             <div class="flex items-center gap-3">
-                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">U</div>
+                 <div class="w-10 h-10 rounded-full overflow-hidden shadow-lg">
+                     <img src="image.png" alt="Logo" class="w-full h-full object-contain rounded-full bg-white">
+                 </div>
                  <div class="hidden md:block">
                      <span class="block font-heading font-extrabold text-xl text-slate-800 leading-none">NewsHub</span>
                      <span class="text-xs font-bold text-indigo-500 tracking-wider uppercase">Student Portal</span>
@@ -235,10 +238,54 @@ function getCategoryColor($slug) {
             <!-- Center Column: Main Feed -->
             <div class="lg:col-span-6 space-y-6">
                 
-                <h3 class="font-heading text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-1.5 h-6 rounded-full bg-indigo-400"></span>
-                    Your Academic Feed
-                </h3>
+                <!-- 1. Active Alerts Section (Prominent) -->
+                <div class="glass-panel p-5 rounded-3xl relative overflow-hidden border-2 border-red-100/50">
+                    <div class="absolute right-0 top-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl"></div>
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <h3 class="font-heading font-bold text-slate-800 flex items-center gap-2 text-lg">
+                            <span class="relative flex h-3 w-3">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                            </span>
+                            System Alerts
+                        </h3>
+                        <span class="text-xs font-bold text-red-500 bg-red-50 border border-red-100 px-3 py-1 rounded-full shadow-sm">
+                            <?php echo count($activeAlerts); ?> Active
+                        </span>
+                    </div>
+
+                    <?php if(!empty($activeAlerts)): ?>
+                        <div class="space-y-3 relative z-10">
+                            <?php foreach($activeAlerts as $alert): 
+                                $severityClass = $alert['severity'] === 'danger' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : ($alert['severity'] === 'warning' ? 'bg-amber-400 text-slate-900' : 'bg-blue-500 text-white');
+                                $icon = $alert['severity'] === 'danger' ? '🚨' : ($alert['severity'] === 'warning' ? '⚠️' : 'ℹ️');
+                            ?>
+                            <div class="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm flex gap-4 items-start transition-transform hover:scale-[1.01]">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0 <?php echo $severityClass; ?>">
+                                    <?php echo $icon; ?>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-base leading-tight mb-1"><?php echo htmlspecialchars($alert['title']); ?></h4>
+                                    <p class="text-sm text-slate-500 leading-relaxed"><?php echo htmlspecialchars($alert['message']); ?></p>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center py-6 text-slate-400 text-sm bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                            <span class="block text-2xl mb-1">🛡️</span>
+                            No active system alerts at the moment.
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- 2. Notices & Feed Header -->
+                <div class="flex items-center justify-between">
+                    <h3 class="font-heading text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-2 h-8 rounded-full bg-indigo-500"></span>
+                        Notice Board & Updates
+                    </h3>
+                </div>
 
                 <!-- Personalized Feed Container -->
                 <div id="news-feed-container" class="space-y-4">
@@ -282,35 +329,21 @@ function getCategoryColor($slug) {
             <!-- Right Column: Alerts & Side Widgets -->
             <aside class="lg:col-span-3 space-y-6">
                 
-                <!-- System Alerts Widget -->
-                <div class="glass-panel p-5 rounded-3xl relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-red-500/10 rounded-full blur-xl"></div>
-                    <div class="flex items-center justify-between mb-4 relative z-10">
-                        <h3 class="font-heading font-bold text-slate-800 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                            Alerts
-                        </h3>
-                        <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md"><?php echo count($activeAlerts); ?> Active</span>
+                <!-- Quick Links (Replaces Alerts) -->
+                <div class="glass-panel p-5 rounded-3xl">
+                    <h3 class="font-heading font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        🔗 Quick Links
+                    </h3>
+                    <div class="space-y-2">
+                         <a href="#" class="block px-4 py-3 bg-white rounded-xl border border-slate-100 text-slate-600 text-sm font-bold hover:border-indigo-200 hover:text-indigo-600 transition-all flex justify-between items-center group">
+                            <span>Exam Schedule</span>
+                            <span class="text-slate-300 group-hover:text-indigo-400">→</span>
+                        </a>
+                        <a href="#" class="block px-4 py-3 bg-white rounded-xl border border-slate-100 text-slate-600 text-sm font-bold hover:border-indigo-200 hover:text-indigo-600 transition-all flex justify-between items-center group">
+                            <span>My Grades</span>
+                            <span class="text-slate-300 group-hover:text-indigo-400">→</span>
+                        </a>
                     </div>
-
-                    <?php if(!empty($activeAlerts)): ?>
-                        <div class="space-y-3 relative z-10">
-                            <?php foreach($activeAlerts as $alert): 
-                                $severityColor = $alert['severity'] === 'danger' ? 'bg-red-50 border-red-100 text-red-800' : ($alert['severity'] === 'warning' ? 'bg-amber-50 border-amber-100 text-amber-800' : 'bg-blue-50 border-blue-100 text-blue-800');
-                                $icon = $alert['severity'] === 'danger' ? '🚨' : ($alert['severity'] === 'warning' ? '⚠️' : 'ℹ️');
-                            ?>
-                            <div class="p-3 rounded-2xl border <?php echo $severityColor; ?> flex gap-3 items-start transition-transform hover:scale-[1.02] cursor-default">
-                                <span class="text-lg mt-0.5"><?php echo $icon; ?></span>
-                                <div>
-                                    <h4 class="font-bold text-sm leading-tight mb-1"><?php echo htmlspecialchars($alert['title']); ?></h4>
-                                    <p class="text-xs opacity-80 leading-snug"><?php echo htmlspecialchars($alert['message']); ?></p>
-                                </div>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php else: ?>
-                        <div class="text-center py-8 text-slate-400 text-xs">No active alerts. Stay safe!</div>
-                    <?php endif; ?>
                 </div>
 
                 <!-- Trending / Buzz -->
@@ -426,29 +459,37 @@ function getCategoryColor($slug) {
                         const temp = document.createElement("div"); temp.innerHTML = n.content;
                         const preview = (temp.textContent || temp.innerText || "").substring(0, 150) + '...';
 
+                        const isNotice = n.category_slug === 'notice';
+                        const noticeHighlight = isNotice ? '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-amber-400"></div>' : '';
+                        const pulse = isNotice ? '<span class="animate-pulse w-2 h-2 rounded-full bg-amber-400"></span>' : '';
+
                         html += `
-                        <div class="glass-panel p-6 rounded-3xl hover:-translate-y-1 transition-transform duration-300">
+                        <div class="glass-panel p-6 rounded-3xl hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+                            ${noticeHighlight}
                             <div class="flex items-start gap-4">
-                                <div class="hidden sm:flex flex-col items-center justify-center bg-indigo-50/50 w-16 h-16 rounded-2xl border border-indigo-100 flex-shrink-0">
+                                <div class="hidden sm:flex flex-col items-center justify-center bg-indigo-50/50 w-20 h-20 rounded-2xl border border-indigo-100 flex-shrink-0 group-hover:bg-white transition-colors shadow-sm">
                                     <span class="text-[0.6rem] font-bold text-indigo-400 uppercase tracking-widest">${month}</span>
-                                    <span class="text-xl font-heading font-black text-slate-700">${day}</span>
+                                    <span class="text-2xl font-heading font-black text-slate-700">${day}</span>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="${color} text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">${n.category_name}</span>
-                                        <span class="text-xs font-bold text-slate-400 flex items-center gap-1">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="${color} text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">${n.category_name}</span>
+                                            ${pulse}
+                                        </div>
+                                        <span class="text-xs font-bold text-slate-400 flex items-center gap-1 bg-white px-2 py-1 rounded-md shadow-sm border border-slate-50">
                                             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                             ${time}
                                         </span>
                                     </div>
-                                    <h2 class="font-heading text-xl font-extrabold text-slate-800 mb-2 leading-snug hover:text-indigo-600 transition-colors">
+                                    <h2 class="font-heading text-2xl font-bold text-slate-900 mb-3 leading-snug hover:text-indigo-600 transition-colors">
                                         <a href="news_details.php?id=${n.news_id}">${n.title}</a>
                                     </h2>
                                     <p class="text-slate-500 text-sm leading-relaxed mb-4 line-clamp-2">${preview}</p>
-                                    <div class="flex items-center gap-4 border-t border-slate-100 pt-3">
-                                        <a href="news_details.php?id=${n.news_id}" class="text-xs font-bold text-indigo-500 hover:text-indigo-700 uppercase tracking-wide flex items-center gap-1">
+                                    <div class="flex items-center gap-4 border-t border-slate-100 pt-4">
+                                        <a href="news_details.php?id=${n.news_id}" class="px-4 py-2 bg-slate-50 hover:bg-indigo-50 text-indigo-600 text-xs font-bold rounded-lg transition-colors flex items-center gap-2 group-hover:shadow-sm">
                                             Read Full Notice 
-                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                            <svg class="w-3 h-3 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                         </a>
                                     </div>
                                 </div>

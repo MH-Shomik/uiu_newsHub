@@ -13,22 +13,22 @@ $search = $_GET['q'] ?? '';
 $category_filter = $_GET['category'] ?? '';
 $date_filter = $_GET['date'] ?? '';
 
-$where_clauses = ["status = 'published'"];
+$where_clauses = ["n.status = 'published'"];
 $params = [];
 
 if ($search) {
-    $where_clauses[] = "(title LIKE ? OR content LIKE ?)";
+    $where_clauses[] = "(n.title LIKE ? OR n.content LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
 
 if ($category_filter) {
-    $where_clauses[] = "category_id = ?";
+    $where_clauses[] = "n.category_id = ?";
     $params[] = $category_filter;
 }
 
 if ($date_filter) {
-    $where_clauses[] = "DATE(created_at) = ?";
+    $where_clauses[] = "DATE(n.created_at) = ?";
     $params[] = $date_filter;
 }
 
@@ -56,6 +56,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search News | UIU NewsHub</title>
+    <link rel="icon" href="image.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -84,7 +85,9 @@ try {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                  <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role'] === 'student') ? 'student_dashboard.php' : 'index.php'; ?>" class="flex items-center gap-2 group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cool_sky-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">U</div>
+                    <div class="w-10 h-10">
+                        <img src="image.png" alt="Logo" class="w-full h-full object-contain rounded-full drop-shadow-md group-hover:scale-110 transition-transform">
+                    </div>
                     <span class="font-heading font-bold text-xl text-slate-900">NewsHub</span>
                 </a>
                 <?php if(isset($_SESSION['user_id'])): ?>
