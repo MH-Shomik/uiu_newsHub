@@ -66,6 +66,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($newsItem['title']); ?> | UIU NewsHub</title>
+    <link rel="icon" href="image.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -106,8 +107,8 @@ try {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                  <a href="index.php" class="flex items-center gap-2 group">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cool_sky-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:rotate-6 transition-transform">
-                        U
+                    <div class="w-8 h-8">
+                        <img src="image.png" alt="Logo" class="w-full h-full object-contain rounded-full drop-shadow-md group-hover:scale-110 transition-transform">
                     </div>
                     <span class="font-heading font-bold text-xl text-slate-900 tracking-tight">UIU <span class="text-cool_sky-500">NewsHub</span></span>
                 </a>
